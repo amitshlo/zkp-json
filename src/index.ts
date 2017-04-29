@@ -7,7 +7,7 @@ const zookeeper = require('node-zookeeper-client');
 
 export const client = zookeeper.createClient('localhost:2181');
 
-client.once('connected', function () {
+client.once('connected', () => {
     console.log('Connected to ZooKeeper.');
     const APPLICATION_PORT = 4000;
     const app = express();

@@ -1,45 +1,46 @@
 import {isNull} from 'util';
-import {merge} from 'lodash';
+import * as _ from 'lodash';
+import * as express from 'express';
 const zookeeper = require('node-zookeeper-client');
 
 import {client} from './index';
 
 export class JSONConverter {
-    static init(app) {
+    static init(app:express.Application) {
         app.get('/toJSON', JSONConverter.getTreeJson);
         app.post('/toJSON', JSONConverter.getTreeJsonFromPath)
     }
 
-    static getTreeJson(req, res) {
+    static getTreeJson(req:express.Request, res:express.Response):void {
         JSONConverter.listChildren('/', '/')
             .then((data) => {
                     res.send(JSON.stringify(data));
                 }
             ).catch((error) => {
-                    res.error(error);
+                    console.log(error);
                 }
         );
     }
 
-    static getTreeJsonFromPath(req, res) {
+    static getTreeJsonFromPath(req:express.Request, res:express.Response):void {
         if (req.body.path) {
             JSONConverter.listChildren(req.body.path, req.body.path)
-                .then((data) => {
+                .then((data:Object) => {
                         res.send(JSON.stringify(data));
                     }
                 );
         } else {
-            res.error('Not path was supplied');
+            console.log('Not path was supplied');
         }
 
     }
 
-    static listChildren(path, basePath):any {
-        return new Promise((resolve, reject) => {
+    static listChildren(path:string, basePath:string):Promise<Object> {
+        return new Promise((resolve:any, reject:any) => {
             client.getChildren(
                 path,
                 () => {},
-                (error, children) => {
+                (error:any, children:any) => {
                     if (error) {
                         reject(error);
                     }
@@ -48,8 +49,8 @@ export class JSONConverter {
                     } else if (children.length > 0) {
                         resolve(JSONConverter.dissembleToChildren(path, children, basePath));
                     } else {
-                        JSONConverter.getData(path).then((data) => {
-                            let obj = {};
+                        JSONConverter.getData(path).then((data:Object) => {
+                            let obj:Object = {};
                             obj[path.slice(path.lastIndexOf('/') + 1, path.length)] = data;
                             resolve(obj);
                         });
@@ -59,19 +60,19 @@ export class JSONConverter {
         });
     }
 
-    static dissembleToChildren(path, children, basePath) {
-        return new Promise((resolve, reject) => {
+    static dissembleToChildren(path:string, children:string[], basePath:string):Promise<Object> {
+        return new Promise((resolve:any, reject:any) => {
             let proArr = [];
             for (let child of children) {
                 proArr.push(JSONConverter.listChildren(((path === '/' ? '' : path) + '/' + child), basePath));
             }
             JSONConverter.getData(path).then((nodeData) => {
-                Promise.all(proArr).then((data) => {
-                    let obj = {};
+                Promise.all(proArr).then((data:Object[]) => {
+                    let obj:Object = {};
                     let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
                     obj[spot] = isNull(nodeData) ? {} : {_data: nodeData};
                     for (let child of data) {
-                        obj[spot] = merge({}, obj[spot], child);
+                        obj[spot] = _.merge({}, obj[spot], child);
                     }
                     resolve(obj);
                 });
@@ -79,8 +80,8 @@ export class JSONConverter {
         });
     }
 
-    static getData(path) {
-        return new Promise((resolve, reject) => {
+    static getData(path:string):Promise<Object> {
+        return new Promise((resolve:any, reject:any) => {
             client.getData(
                 path,
                 () => {},
@@ -88,7 +89,7 @@ export class JSONConverter {
                     if (error) {
                         reject(error);
                     }
-                    let obj = {};
+                    let obj:Object = {};
                     let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
                     obj[spot] = JSONConverter.isJSON(data.toString()) ? JSON.parse(data.toString()) : data.toString();
                     resolve(obj[spot] !== '' ? obj[spot] : null);
@@ -97,7 +98,7 @@ export class JSONConverter {
         });
     }
 
-    static isJSON(str) {
+    static isJSON(str:string):boolean {
         try {
             JSON.parse(str);
         } catch (e) {
