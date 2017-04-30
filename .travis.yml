@@ -1,0 +1,15 @@
+language: node_js
+node_js: stable
+
+install:
+  - yarn global add typescript
+  - yarn
+
+os:
+  - linux
+
+cache:
+  directories: node_modules
+
+script:
+  - npm run build
