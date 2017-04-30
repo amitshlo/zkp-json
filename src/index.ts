@@ -11,7 +11,7 @@ export const client = zookeeper.createClient(`${zookeeperURL}:2181`);
 client.once('connected', () => {
     console.log('Connected to ZooKeeper.');
     const APPLICATION_PORT = process.env.ZOOKEEPER_JSON_PORT ? process.env.ZOOKEEPER_JSON_PORT : 9010;
-    const app = express();
+    const app:express.Application = express();
     app.use(cors());
     app.use(bodyParser.json());
     JSONConverter.init(app);
