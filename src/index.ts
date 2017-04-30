@@ -5,14 +5,15 @@ import {JSONConverter} from './json-converter';
 
 const zookeeper = require('node-zookeeper-client');
 
-export const client = zookeeper.createClient('localhost:2181');
+const zookeeperURL = process.env.ZOOKEEPER_URL ? process.env.ZOOKEEPER_URL : 'localhost';
+export const client = zookeeper.createClient(`${zookeeperURL}:2181`);
 
 client.once('connected', () => {
     console.log('Connected to ZooKeeper.');
-    const APPLICATION_PORT = 4000;
+    const APPLICATION_PORT = process.env.ZOOKEEPER_JSON_PORT ? process.env.ZOOKEEPER_JSON_PORT : 9010;
     const app = express();
     app.use(cors());
-    app.use(bodyParser.json())
+    app.use(bodyParser.json());
     JSONConverter.init(app);
     app.listen(APPLICATION_PORT, () => {
         console.log(`App is running on port ${APPLICATION_PORT}. Have Fun!`);
