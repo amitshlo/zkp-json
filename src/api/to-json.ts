@@ -10,7 +10,7 @@ export class ToJsonAPI {
         app.post('/toJSON', ToJsonAPI.getTreeJsonFromPath)
     }
 
-    static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
+    private static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
         try {
             res.send(await ToJsonAPI.listChildren('/', '/'));
         } catch (error) {
@@ -19,7 +19,7 @@ export class ToJsonAPI {
         }
     }
 
-    static async getTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
+    private static async getTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path) {
             try {
                 res.send(await ToJsonAPI.listChildren(req.body.path, req.body.path));
@@ -34,7 +34,7 @@ export class ToJsonAPI {
 
     }
 
-    static listChildren(path:string, basePath:string):Promise<Object> {
+    private static listChildren(path:string, basePath:string):Promise<Object> {
         return new Promise((resolve:any, reject:any) => {
             client.getChildren(
                 path,
@@ -57,7 +57,7 @@ export class ToJsonAPI {
         });
     }
 
-    static dissembleToChildren(path:string, children:string[], basePath:string):Promise<Object> {
+    private static dissembleToChildren(path:string, children:string[], basePath:string):Promise<Object> {
         return new Promise(async (resolve:any, reject:any) => {
             let proArr = [];
             for (let child of children) {
@@ -75,7 +75,7 @@ export class ToJsonAPI {
         });
     }
 
-    static getData(path:string):Promise<Object> {
+    private static getData(path:string):Promise<Object> {
         return new Promise((resolve:any, reject:any) => {
             client.getData(
                 path,
@@ -93,7 +93,7 @@ export class ToJsonAPI {
         });
     }
 
-    static isJSON(str:string):boolean {
+    private static isJSON(str:string):boolean {
         try {
             JSON.parse(str);
         } catch (e) {

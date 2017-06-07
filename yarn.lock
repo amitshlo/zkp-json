@@ -36,6 +36,12 @@
   version "0.0.29"
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-0.0.29.tgz#fbcfd330573b912ef59eeee14602bface630754b"
 
+"@types/node-zookeeper-client@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@types/node-zookeeper-client/-/node-zookeeper-client-0.2.2.tgz#afded9202a5474584aeaba6f40d03b7d1493fb7d"
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*", "@types/node@^7.0.14":
   version "7.0.14"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.14.tgz#1470fa002a113316ac9d9ad163fc738c7a0de2a4"
