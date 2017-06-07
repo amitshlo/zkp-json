@@ -2,8 +2,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as zookeeper from 'node-zookeeper-client';
-
-import {JSONConverter} from './api/to-json';
+import {JsonAPI} from './api/index';
 
 const zookeeperURL = process.env.ZOOKEEPER_URL ? process.env.ZOOKEEPER_URL : 'localhost';
 export const client = zookeeper.createClient(`${zookeeperURL}:2181`);
@@ -14,7 +13,7 @@ client.once('connected', () => {
     const app:express.Application = express();
     app.use(cors());
     app.use(bodyParser.json());
-    JSONConverter.init(app);
+    JsonAPI.init(app);
     app.listen(APPLICATION_PORT, () => {
         console.log(`App is running on port ${APPLICATION_PORT}. Have Fun!`);
     });

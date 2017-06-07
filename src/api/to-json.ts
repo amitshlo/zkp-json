@@ -4,15 +4,15 @@ import * as express from 'express';
 
 import {client} from '../index';
 
-export class JSONConverter {
+export class ToJsonAPI {
     static init(app:express.Application) {
-        app.get('/toJSON', JSONConverter.getTreeJson);
-        app.post('/toJSON', JSONConverter.getTreeJsonFromPath)
+        app.get('/toJSON', ToJsonAPI.getTreeJson);
+        app.post('/toJSON', ToJsonAPI.getTreeJsonFromPath)
     }
 
     static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
         try {
-            res.send(await JSONConverter.listChildren('/', '/'));
+            res.send(await ToJsonAPI.listChildren('/', '/'));
         } catch (error) {
             console.log(`Error: ${error}`);
             res.status(500).send(`Error: ${error}`);
@@ -22,7 +22,7 @@ export class JSONConverter {
     static async getTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path) {
             try {
-                res.send(await JSONConverter.listChildren(req.body.path, req.body.path));
+                res.send(await ToJsonAPI.listChildren(req.body.path, req.body.path));
             } catch (error) {
                 console.log(`Error: ${error}`);
                 res.status(500).send(`Error: ${error}`);
@@ -44,12 +44,12 @@ export class JSONConverter {
                         reject(error);
                     }
                     if (path === basePath) {
-                        resolve(JSONConverter.dissembleToChildren(basePath, children, basePath));
+                        resolve(ToJsonAPI.dissembleToChildren(basePath, children, basePath));
                     } else if (children.length > 0) {
-                        resolve(JSONConverter.dissembleToChildren(path, children, basePath));
+                        resolve(ToJsonAPI.dissembleToChildren(path, children, basePath));
                     } else {
                         let obj:Object = {};
-                        obj[path.slice(path.lastIndexOf('/') + 1, path.length)] = await JSONConverter.getData(path);
+                        obj[path.slice(path.lastIndexOf('/') + 1, path.length)] = await ToJsonAPI.getData(path);
                         resolve(obj);
                     }
                 }
@@ -61,9 +61,9 @@ export class JSONConverter {
         return new Promise(async (resolve:any, reject:any) => {
             let proArr = [];
             for (let child of children) {
-                proArr.push(JSONConverter.listChildren(((path === '/' ? '' : path) + '/' + child), basePath));
+                proArr.push(ToJsonAPI.listChildren(((path === '/' ? '' : path) + '/' + child), basePath));
             }
-            let nodeData = await JSONConverter.getData(path);
+            let nodeData = await ToJsonAPI.getData(path);
             let data = await Promise.all(proArr);
             let obj:Object = {};
             let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
@@ -86,7 +86,7 @@ export class JSONConverter {
                     }
                     let obj:Object = {};
                     let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
-                    obj[spot] = JSONConverter.isJSON(data.toString()) ? JSON.parse(data.toString()) : data.toString();
+                    obj[spot] = ToJsonAPI.isJSON(data.toString()) ? JSON.parse(data.toString()) : data.toString();
                     resolve(obj[spot] !== '' ? obj[spot] : null);
                 }
             )
