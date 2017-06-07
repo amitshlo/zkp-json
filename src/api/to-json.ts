@@ -1,9 +1,8 @@
 import {isNull} from 'util';
 import * as _ from 'lodash';
 import * as express from 'express';
-const zookeeper = require('node-zookeeper-client');
 
-import {client} from './index';
+import {client} from '../index';
 
 export class JSONConverter {
     static init(app:express.Application) {
@@ -16,7 +15,7 @@ export class JSONConverter {
             res.send(await JSONConverter.listChildren('/', '/'));
         } catch (error) {
             console.log(`Error: ${error}`);
-            res.status(400).send(`Error: ${error}`);
+            res.status(500).send(`Error: ${error}`);
         }
     }
 
@@ -26,7 +25,7 @@ export class JSONConverter {
                 res.send(await JSONConverter.listChildren(req.body.path, req.body.path));
             } catch (error) {
                 console.log(`Error: ${error}`);
-                res.status(400).send(`Error: ${error}`);
+                res.status(500).send(`Error: ${error}`);
             }
         } else {
             console.log('Error: Not path was supplied');

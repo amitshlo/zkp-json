@@ -1,9 +1,9 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
-import {JSONConverter} from './json-converter';
+import * as zookeeper from 'node-zookeeper-client';
 
-const zookeeper = require('node-zookeeper-client');
+import {JSONConverter} from './api/to-json';
 
 const zookeeperURL = process.env.ZOOKEEPER_URL ? process.env.ZOOKEEPER_URL : 'localhost';
 export const client = zookeeper.createClient(`${zookeeperURL}:2181`);
