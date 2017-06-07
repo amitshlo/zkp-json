@@ -11,26 +11,26 @@ export class JSONConverter {
         app.post('/toJSON', JSONConverter.getTreeJsonFromPath)
     }
 
-    static getTreeJson(req:express.Request, res:express.Response):void {
-        JSONConverter.listChildren('/', '/')
-            .then((data) => {
-                    res.send(JSON.stringify(data));
-                }
-            ).catch((error) => {
-                    console.log(error);
-                }
-        );
+    static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
+        try {
+            res.send(await JSONConverter.listChildren('/', '/'));
+        } catch (error) {
+            console.log(`Error: ${error}`);
+            res.status(400).send(`Error: ${error}`);
+        }
     }
 
-    static getTreeJsonFromPath(req:express.Request, res:express.Response):void {
+    static async getTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path) {
-            JSONConverter.listChildren(req.body.path, req.body.path)
-                .then((data:Object) => {
-                        res.send(JSON.stringify(data));
-                    }
-                );
+            try {
+                res.send(await JSONConverter.listChildren(req.body.path, req.body.path));
+            } catch (error) {
+                console.log(`Error: ${error}`);
+                res.status(400).send(`Error: ${error}`);
+            }
         } else {
-            console.log('Not path was supplied');
+            console.log('Error: Not path was supplied');
+            res.status(400).send(`Error: Not path was supplied`);
         }
 
     }
@@ -40,7 +40,7 @@ export class JSONConverter {
             client.getChildren(
                 path,
                 () => {},
-                (error:any, children:any) => {
+                async (error:any, children:any) => {
                     if (error) {
                         reject(error);
                     }
@@ -49,11 +49,9 @@ export class JSONConverter {
                     } else if (children.length > 0) {
                         resolve(JSONConverter.dissembleToChildren(path, children, basePath));
                     } else {
-                        JSONConverter.getData(path).then((data:Object) => {
-                            let obj:Object = {};
-                            obj[path.slice(path.lastIndexOf('/') + 1, path.length)] = data;
-                            resolve(obj);
-                        });
+                        let obj:Object = {};
+                        obj[path.slice(path.lastIndexOf('/') + 1, path.length)] = await JSONConverter.getData(path);
+                        resolve(obj);
                     }
                 }
             )
@@ -61,22 +59,20 @@ export class JSONConverter {
     }
 
     static dissembleToChildren(path:string, children:string[], basePath:string):Promise<Object> {
-        return new Promise((resolve:any, reject:any) => {
+        return new Promise(async (resolve:any, reject:any) => {
             let proArr = [];
             for (let child of children) {
                 proArr.push(JSONConverter.listChildren(((path === '/' ? '' : path) + '/' + child), basePath));
             }
-            JSONConverter.getData(path).then((nodeData) => {
-                Promise.all(proArr).then((data:Object[]) => {
-                    let obj:Object = {};
-                    let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
-                    obj[spot] = isNull(nodeData) ? {} : {_data: nodeData};
-                    for (let child of data) {
-                        obj[spot] = _.merge({}, obj[spot], child);
-                    }
-                    resolve(obj);
-                });
-            });
+            let nodeData = await JSONConverter.getData(path);
+            let data = await Promise.all(proArr);
+            let obj:Object = {};
+            let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
+            obj[spot] = isNull(nodeData) ? {} : {_data: nodeData};
+            for (let child of data) {
+                obj[spot] = _.merge({}, obj[spot], child);
+            }
+            resolve(obj);
         });
     }
 
