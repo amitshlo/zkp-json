@@ -87,7 +87,7 @@ export class ToJsonAPI {
                     }
                     let obj:Object = {};
                     let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
-                    obj[spot] = ToJsonAPI.isJSON(data.toString()) ? JSON.parse(data.toString()) : data.toString();
+                    obj[spot] = ToJsonAPI.isJSON(data.toString()) ? Object.assign({}, JSON.parse(data.toString()), {nodeData: true}) : data.toString();
                     resolve(obj[spot] !== '' ? obj[spot] : null);
                 }
             )

@@ -55,7 +55,7 @@ export class FromJsonAPI {
                         if (error) {
                             reject(error);
                         }
-                        if (data['_data'] || typeof data === "string") {
+                        if (data['_data'] || typeof data === "string" || (typeof data === "object" && data.nodeData)) {
                             await FromJsonAPI.setDataInNode(path, data['_data'] ? data['_data'] : data);
                         }
                         if (typeof data === "object") {
@@ -75,7 +75,7 @@ export class FromJsonAPI {
         return new Promise((resolve:any, reject:any) => {
             client.setData(
                 path,
-                new Buffer(data),
+                new Buffer(typeof data === "string" ? data : JSON.stringify(data)),
                 (error, stat) => {
                     if (error) {
                         reject(error);
