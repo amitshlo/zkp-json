@@ -4,6 +4,7 @@ import * as express from 'express';
 
 import {client} from '../index';
 
+//TODO - refactor!!!!
 export class ToJsonAPI {
     static init(app:express.Application) {
         app.get('/toJSON', ToJsonAPI.getTreeJson);

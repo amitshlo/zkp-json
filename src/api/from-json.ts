@@ -7,7 +7,7 @@ export class FromJsonAPI {
         app.post('/fromJSON', FromJsonAPI.setTreeJsonFromPath)
     }
 
-    static async setTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
+    private static async setTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path && req.body.data) {
             try {
                 await FromJsonAPI.createTree(req.body.path, req.body.data, true);
