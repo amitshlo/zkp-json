@@ -31,7 +31,6 @@ export class FromJsonAPI {
                     if (isBase) {
                         await FromJsonAPI.checkIfNodeExistAndRemove(`${path === '/' ? '' : path}/${property}`);
                     }
-                    console.log(property, data);
                     if (property !== '_data') {
                         proArr.push(FromJsonAPI.createNode(`${path === '/' ? '' : path}/${property}`, data[property]));
                     }
@@ -55,10 +54,10 @@ export class FromJsonAPI {
                         if (error) {
                             reject(error);
                         }
-                        if (data['_data'] || typeof data === "string" || (typeof data === "object" && data.nodeData)) {
+                        if (data['_data'] || typeof data === 'string' || typeof data === 'number' || Array.isArray(data) || (typeof data === 'object' && data.nodeData)) {
                             await FromJsonAPI.setDataInNode(path, data['_data'] ? data['_data'] : data);
                         }
-                        if (typeof data === "object") {
+                        if (typeof data === 'object' && !Array.isArray(data)) {
                             await FromJsonAPI.createTree(path, data, false);
                         }
                         resolve(true);
@@ -75,7 +74,7 @@ export class FromJsonAPI {
         return new Promise((resolve:any, reject:any) => {
             client.setData(
                 path,
-                new Buffer(typeof data === "string" ? data : JSON.stringify(data)),
+                new Buffer(typeof data === 'string' ? data : JSON.stringify(data)),
                 (error, stat) => {
                     if (error) {
                         reject(error);

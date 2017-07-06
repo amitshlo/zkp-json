@@ -87,11 +87,27 @@ export class ToJsonAPI {
                     }
                     let obj:Object = {};
                     let spot = path.slice(path.lastIndexOf('/') + 1, path.length);
-                    obj[spot] = ToJsonAPI.isJSON(data.toString()) ? Object.assign({}, JSON.parse(data.toString()), {nodeData: true}) : data.toString();
+                    obj[spot] = ToJsonAPI.parseNodeData(data.toString());
                     resolve(obj[spot] !== '' ? obj[spot] : null);
                 }
             )
         });
+    }
+
+    private static parseNodeData(data:string):any {
+        let isNumber = /^\d+$/.test(data);
+        let isJson = ToJsonAPI.isJSON(data);
+        let isArray = isJson ? JSON.parse(data)['0'] : false;
+        if (isJson && !isNumber && !isArray) {
+            return Object.assign({}, JSON.parse(data.toString()), {nodeData: true});
+        } else if (isNumber) {
+            return parseInt(data);
+        } else if (isArray) {
+            let workingStr = data.substring(1, data.length - 1);
+            return workingStr.split(/\s*,\s*/).map((elem) => elem.substring(1, elem.length -1));
+        } else {
+            return data.toString();
+        }
     }
 
     private static isJSON(str:string):boolean {
