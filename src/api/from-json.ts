@@ -57,7 +57,7 @@ export class FromJsonAPI {
                         if (data['_data'] || typeof data === 'string' || typeof data === 'number' || Array.isArray(data) || (typeof data === 'object' && data.nodeData)) {
                             await FromJsonAPI.setDataInNode(path, data['_data'] ? data['_data'] : data);
                         }
-                        if (typeof data === 'object' && !Array.isArray(data)) {
+                        if (typeof data === 'object' && !Array.isArray(data) && !data.nodeData) {
                             await FromJsonAPI.createTree(path, data, false);
                         }
                         resolve(true);
