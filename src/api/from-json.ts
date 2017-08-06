@@ -54,7 +54,9 @@ export class FromJsonAPI {
                         if (error) {
                             reject(error);
                         }
-                        if (data['_data'] || typeof data === 'string' || typeof data === 'number' || Array.isArray(data) || (typeof data === 'object' && data.nodeData)) {
+                        if (data['_data'] || typeof data === 'string' || typeof data === 'number'
+                            || Array.isArray(data) || (typeof data === 'object' && data.nodeData)
+                            || data === false || data === true) {
                             await FromJsonAPI.setDataInNode(path, data['_data'] ? data['_data'] : data);
                         }
                         if (typeof data === 'object' && !Array.isArray(data) && !data.nodeData) {
