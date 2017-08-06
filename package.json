@@ -24,6 +24,7 @@
     "cors": "^2.8.3",
     "express": "^4.15.2",
     "lodash": "^4.17.4",
-    "node-zookeeper-client": "^0.2.2"
+    "node-zookeeper-client": "^0.2.2",
+    "parse-types": "^1.0.2"
   }
 }

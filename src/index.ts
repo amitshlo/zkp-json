@@ -4,8 +4,8 @@ import * as bodyParser from 'body-parser';
 import * as zookeeper from 'node-zookeeper-client';
 import {JsonAPI} from './api/index';
 
-const zookeeperURL = process.env.ZOOKEEPER_URL ? process.env.ZOOKEEPER_URL : 'localhost';
-export const client = zookeeper.createClient(`${zookeeperURL}:2181`);
+const zookeeperURL = process.env.ZOOKEEPER_URL ? process.env.ZOOKEEPER_URL : 'localhost:2181';
+export const client = zookeeper.createClient(`${zookeeperURL}`);
 
 client.once('connected', () => {
     console.log('Connected to ZooKeeper.');

@@ -1,6 +1,7 @@
 import {isNull} from 'util';
 import * as _ from 'lodash';
 import * as express from 'express';
+let parse = require('parse-types');
 
 import {client} from '../index';
 
@@ -95,16 +96,19 @@ export class ToJsonAPI {
     }
 
     private static parseNodeData(data:string):any {
+        //TODO - can parse library be used for all of this?
         let isNumber = /^\d+$/.test(data);
         let isJson = ToJsonAPI.isJSON(data);
-        let isArray = isJson ? JSON.parse(data)['0'] : false;
-        if (isJson && !isNumber && !isArray) {
+        let isArray = data.charAt(0) === '[' && data.charAt(data.length-1) === ']';
+        let isBoolean = data === 'true' || data === 'false';
+        if (isJson && !isNumber && !isArray && !isBoolean) {
             return Object.assign({}, JSON.parse(data.toString()), {nodeData: true});
         } else if (isNumber) {
             return parseInt(data);
         } else if (isArray) {
-            let workingStr = data.substring(1, data.length - 1);
-            return workingStr.split(/\s*,\s*/).map((elem) => elem.substring(1, elem.length -1));
+            return parse(data);
+        } else if (isBoolean) {
+            return data === 'true';
         } else {
             return data.toString();
         }

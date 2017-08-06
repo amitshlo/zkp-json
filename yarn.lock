@@ -220,7 +220,7 @@ ipaddr.js@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.3.0.tgz#1e03a52fdad83a8bbb2b25cbf4998b4cffcd3dec"
 
-lodash@^4.17.4:
+lodash@^4.13.1, lodash@^4.17.4:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -278,6 +278,12 @@ on-finished@~2.3.0:
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
   dependencies:
     ee-first "1.1.1"
+
+parse-types@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/parse-types/-/parse-types-1.0.2.tgz#11676717d6866b95606a8d03030671a9ab0c7eb3"
+  dependencies:
+    lodash "^4.13.1"
 
 parseurl@~1.3.1:
   version "1.3.1"
