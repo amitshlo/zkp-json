@@ -36,7 +36,7 @@ export class ToJsonAPI {
 
     }
 
-    private static listChildren(path:string, basePath:string):Promise<Object> {
+    static listChildren(path:string, basePath:string):Promise<Object> {
         return new Promise((resolve:any, reject:any) => {
             client.getChildren(
                 path,

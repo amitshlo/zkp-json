@@ -23,7 +23,7 @@ export class FromJsonAPI {
 
     }
 
-    private static createTree(path:string, data:any, isBase:boolean):Promise<any> {
+    static createTree(path:string, data:any, isBase:boolean):Promise<any> {
         return new Promise(async (resolve:any, reject:any) => {
             let proArr:Promise<any>[] = [];
             for (let property in data) {
