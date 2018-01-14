@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start": "tsc && cd build && node index",
-    "build": "tsc",
+    "build": "tsc -v",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
