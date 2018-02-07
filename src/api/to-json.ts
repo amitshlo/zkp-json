@@ -1,6 +1,7 @@
 import {isNull} from 'util';
 import * as _ from 'lodash';
 import * as express from 'express';
+import winston = require('winston');
 let parse = require('parse-types');
 
 import {client} from '../index';
@@ -14,9 +15,10 @@ export class ToJsonAPI {
 
     private static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
         try {
+            winston.info(`Got 'toJSON' request from ${req.ip} with path: '/'.`);
             res.send(await ToJsonAPI.listChildren('/', '/'));
         } catch (error) {
-            console.log(`Error: ${error}`);
+            winston.error(`Got error trying to handle 'toJSON' request from ${req.ip} with path: '/'. Error: ${error.message}.`, error);
             res.status(500).send(`Error: ${error}`);
         }
     }
@@ -24,14 +26,15 @@ export class ToJsonAPI {
     private static async getTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path) {
             try {
+                winston.info(`Got 'toJSON' request from ${req.ip} with path: '${req.body.path}'.`);
                 res.send(await ToJsonAPI.listChildren(req.body.path, req.body.path));
             } catch (error) {
-                console.log(`Error: ${error}`);
+                winston.error(`Got error trying to handle 'toJSON' request from ${req.ip} with path: '${req.body.path}'. Error: ${error.message}.`, error);
                 res.status(500).send(`Error: ${error}`);
             }
         } else {
-            console.log('Error: Not path was supplied');
-            res.status(400).send(`Error: Not path was supplied`);
+            winston.error(`Got error trying to handle 'toJSON' request from ${req.ip}. Error: No path was supplied`);
+            res.status(400).send(`Error: No path was supplied`);
         }
 
     }
@@ -40,7 +43,6 @@ export class ToJsonAPI {
         return new Promise((resolve:any, reject:any) => {
             client.getChildren(
                 path,
-                () => {},
                 async (error:any, children:any) => {
                     if (error) {
                         reject(error);
@@ -81,7 +83,6 @@ export class ToJsonAPI {
         return new Promise((resolve:any, reject:any) => {
             client.getData(
                 path,
-                () => {},
                 (error, data) => {
                     if (error) {
                         reject(error);

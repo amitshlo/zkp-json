@@ -1,4 +1,5 @@
 import * as express from 'express';
+import winston = require('winston');
 
 import {client} from '../index';
 
@@ -10,14 +11,16 @@ export class FromJsonAPI {
     private static async setTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
         if (req.body.path && req.body.data) {
             try {
+                winston.info(`Got 'fromJSON' request from ${req.ip} with path: '${req.body.path}'.`);
                 await FromJsonAPI.createTree(req.body.path, req.body.data, true);
+                winston.info(`Successfully executed 'fromJSON' request from ${req.ip} with path: '${req.body.path}'.`);
                 res.send('Created Successfully');
             } catch (error) {
-                console.log(`Error: ${error}`);
+                winston.error(`Got error trying to handle 'fromJSON' request from ${req.ip} with path: '${req.body.path}'. Error: ${error.message}.`, error);
                 res.status(500).send(`Error: ${error}`);
             }
         } else {
-            console.log('Error: Not path or data was supplied');
+            winston.error(`Got error trying to handle 'fromJSON' request from ${req.ip}. Error: No path was supplied`);
             res.status(400).send(`Error: Not path or data was supplied`);
         }
 
