@@ -2,10 +2,11 @@ import * as express from 'express';
 import winston = require('winston');
 
 import {client} from '../index';
+import {CommonFunctions} from './common';
 
 export class FromJsonAPI {
     static init(app:express.Application) {
-        app.post('/fromJSON', FromJsonAPI.setTreeJsonFromPath)
+        app.post('/fromJSON', FromJsonAPI.setTreeJsonFromPath);
     }
 
     private static async setTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
@@ -32,7 +33,7 @@ export class FromJsonAPI {
             for (let property in data) {
                 if (data.hasOwnProperty(property)) {
                     if (isBase) {
-                        await FromJsonAPI.checkIfNodeExistAndRemove(`${path === '/' ? '' : path}/${property}`);
+                        await CommonFunctions.checkIfNodeExistAndRemove(`${path === '/' ? '' : path}/${property}`);
                     }
                     if (property !== '_data') {
                         proArr.push(FromJsonAPI.createNode(`${path === '/' ? '' : path}/${property}`, data[property]));
@@ -86,60 +87,6 @@ export class FromJsonAPI {
                     }
                     resolve(stat);
                 }
-            )
-        });
-    }
-
-    private static checkIfNodeExistAndRemove(path:string):Promise<Object> {
-        return new Promise((resolve:any, reject:any) => {
-            client.exists(
-                path,
-                async (error, stat) => {
-                    if (error) {
-                        reject(error);
-                    } else if (stat) {
-                        resolve(await FromJsonAPI.deleteNodeWithChildren(path));
-                    } else {
-                        resolve(true);
-                    }
-                }
-            )
-        });
-    }
-
-    private static deleteNodeWithChildren(path:string):Promise<Object> {
-        return new Promise((resolve:any, reject:any) => {
-            client.getChildren(
-                path,
-                () => {},
-                async (error:any, children:any) => {
-                    if (error) {
-                        reject(error);
-                    }
-                    if (children.length !== 0) {
-                        await FromJsonAPI.dissembleDeletedNodeToChildren(path, children);
-                    }
-                    resolve(await FromJsonAPI.deleteNode(path));
-                }
-            )
-        });
-    }
-
-    static dissembleDeletedNodeToChildren(path:string, children:string[]):Promise<Object> {
-        return new Promise(async (resolve:any, reject:any) => {
-            let proArr = [];
-            for (let child of children) {
-                proArr.push(FromJsonAPI.deleteNodeWithChildren(`${path}/${child}`));
-            }
-            resolve(await Promise.all(proArr));
-        });
-    }
-
-    private static async deleteNode(path:string):Promise<Object> {
-        return new Promise((resolve:any, reject:any) => {
-            client.remove(
-                path,
-                (error) => error ? reject(error) : resolve(true)
             )
         });
     }
