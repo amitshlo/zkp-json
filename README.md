@@ -48,3 +48,11 @@ Create the tree from the given path and JSON:
 POST http://server-address:port/fromJSON
 PARAMS {"path: "/somepath", "data": {"node_name": {"child":"child_data", "_data":"node_data", "complex_child": {"child":"child_data", "_data":"node_data"}...}}}
 ```
+
+### Delete tree from path
+
+TODO
+
+### Duplicate tree
+
+TODO
