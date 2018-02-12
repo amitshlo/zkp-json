@@ -13,7 +13,7 @@ client.once('connected', () => {
     const APPLICATION_PORT = process.env.ZOOKEEPER_JSON_PORT ? process.env.ZOOKEEPER_JSON_PORT : 9010;
     const app:express.Application = express();
     app.use(cors());
-    app.use(bodyParser.json());
+    app.use(bodyParser.json({limit: '50mb'}));
     JsonAPI.init(app);
     app.listen(APPLICATION_PORT, () => {
         winston.info(`App is running on port ${APPLICATION_PORT}. Have Fun!`);
