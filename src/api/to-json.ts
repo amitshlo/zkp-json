@@ -10,7 +10,9 @@ import {client} from '../index';
 export class ToJsonAPI {
     static init(app:express.Application) {
         app.get('/toJSON', ToJsonAPI.getTreeJson);
+        app.get('/getJSON', ToJsonAPI.getTreeJson);
         app.post('/toJSON', ToJsonAPI.getTreeJsonFromPath);
+        app.post('/getJSON', ToJsonAPI.getTreeJsonFromPath);
     }
 
     private static async getTreeJson(req:express.Request, res:express.Response):Promise<any> {
