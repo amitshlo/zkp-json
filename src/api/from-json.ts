@@ -7,6 +7,7 @@ import {CommonFunctions} from './common';
 export class FromJsonAPI {
     static init(app:express.Application) {
         app.post('/fromJSON', FromJsonAPI.setTreeJsonFromPath);
+        app.post('/putJSON', FromJsonAPI.setTreeJsonFromPath);
     }
 
     private static async setTreeJsonFromPath(req:express.Request, res:express.Response):Promise<any> {
